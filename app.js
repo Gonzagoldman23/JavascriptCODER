@@ -1,38 +1,42 @@
-let valorDolar = 140; 
+const convertirCantidad = document.querySelector('#convertir');
+const seleccion = document.querySelectorAll('.moneda select');
+primeraMoneda = document.querySelector('#primera select');
+segundaMoneda = document.querySelector('#segunda select');
 
-function pesosADolar(cantidadDolares) {
-    return Math.round(cantidadDolares / valorDolar); 
-}
-
-function dolarAPesos(cantidadPesos) {
-    return Math.round(cantidadPesos * valorDolar);
-}
-
-class Operacion {
-    constructor(divisa, cantidad, total) {
-        this.divisa = divisa;
-        this.cantidad = cantidad;
-        this.total = total; 
+for (let i = 0; i < seleccion.length; i++) {
+    for(pais in listaPaises) {
+        let seleccionada; 
+        if (i == 0){
+            seleccionada = pais == 'ARS' ? 'selected' : '';
+        } else if (i == 1){
+            seleccionada = pais == 'USD' ? 'selected' : '';
+        }
+        let opciones = `<option value='${pais}' ${seleccionada}>${pais}</option>`
+        seleccion[i].insertAdjacentHTML('beforeend', opciones); 
     }
+    
 }
 
-const operaciones = [];
-
-for (let index = 0; index < 5; index++) {
-    const entrada = prompt('Elija la cotizacion que quiere hacer \n 1. Pasar de peso a dolar \n 2. Pasar de dolar a peso');
-    const cantidad = Number(prompt('Ingrese la cantidad de pesos/dolares'))
-    if (entrada == 1) {
-        pesosADolar(cantidad);
-        operaciones.push(new Operacion('Pesos', cantidad, pesosADolar(cantidad)))
-        alert('Usted tiene ' + (pesosADolar(cantidad)) + ' dolares');
-    } if (entrada == 2) {
-        dolarAPesos(cantidad);
-        operaciones.push(new Operacion('Dolar', cantidad, dolarAPesos(cantidad)))
-        alert('Usted tiene ' + (dolarAPesos(cantidad)) + ' pesos');
-    } else {
-        alert('Ingrese una opcion valida')
+function convertir() {
+    const cantidad = document.querySelector('.cantidad input');
+    let cantidadValor = cantidad.value;
+    if (cantidadValor == '' || cantidadValor == '0') {
+        cantidad.value = '1';
+        cantidadValor = 1; 
     }
+    let api = `https://v6.exchangerate-api.com/v6/ad48dc314b59cfa96bc535a5/latest/${primeraMoneda.value}`
+    fetch(api)
+    .then(response => response.json())
+    .then(result => {
+        let valorMoneda = result.conversion_rates[segundaMoneda.value];
+        let total = (cantidadValor * valorMoneda).toFixed(2); 
+        const resultadoTxt = document.querySelector('#resultado');
+        resultadoTxt.innerText = `Resultado: ${total}`;
+    })
+
 }
 
-console.log(operaciones);
-console.log(operaciones.length);
+convertirCantidad.addEventListener('click', convertir);
+
+
+
