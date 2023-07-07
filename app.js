@@ -1,28 +1,38 @@
-const convertirCantidad = document.querySelector('#convertir');
+let valorDolar = 140; 
 
-function convertir() {
-    const cantidad = Number(document.querySelector('#cantidad').value);
-    document.getElementById('resultado').innerHTML = cantidad;
-    const primeraMoneda = document.querySelector('#primera-moneda').value;
-    const segundaMoneda = document.querySelector('#segunda-moneda').value;
-    const valorDolar = 143;
-    resultado = 0;
-
-    if (primeraMoneda=='ARS' && segundaMoneda=='USD') {
-        resultado = cantidad / valorDolar;
-    } else if (primeraMoneda=='USD' && segundaMoneda=='ARS') {
-        resultado = cantidad * valorDolar
-    } else {
-        resultado = cantidad;
-    }
-
-    document.getElementById('resultado').innerHTML = `Resultado: $${resultado}`;
-
-    const transJSON = JSON.stringify(resultado);
-    localStorage.setItem('resultado', transJSON);
-
+function pesosADolar(cantidadDolares) {
+    return Math.round(cantidadDolares / valorDolar); 
 }
 
-convertirCantidad.addEventListener('click', convertir);
+function dolarAPesos(cantidadPesos) {
+    return Math.round(cantidadPesos * valorDolar);
+}
 
-// APP JS
+class Operacion {
+    constructor(divisa, cantidad, total) {
+        this.divisa = divisa;
+        this.cantidad = cantidad;
+        this.total = total; 
+    }
+}
+
+const operaciones = [];
+
+for (let index = 0; index < 5; index++) {
+    const entrada = prompt('Elija la cotizacion que quiere hacer \n 1. Pasar de peso a dolar \n 2. Pasar de dolar a peso');
+    const cantidad = Number(prompt('Ingrese la cantidad de pesos/dolares'))
+    if (entrada == 1) {
+        pesosADolar(cantidad);
+        operaciones.push(new Operacion('Pesos', cantidad, pesosADolar(cantidad)))
+        alert('Usted tiene ' + (pesosADolar(cantidad)) + ' dolares');
+    } if (entrada == 2) {
+        dolarAPesos(cantidad);
+        operaciones.push(new Operacion('Dolar', cantidad, dolarAPesos(cantidad)))
+        alert('Usted tiene ' + (dolarAPesos(cantidad)) + ' pesos');
+    } else {
+        alert('Ingrese una opcion valida')
+    }
+}
+
+console.log(operaciones);
+console.log(operaciones.length);
